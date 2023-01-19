@@ -20,11 +20,43 @@ namespace MusicApp.Controllers
         }
 
         // GET: MusicRecords
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromQuery(Name = "q")] string searchText, string orderBy, string orderDirection)
         {
-              return _context.MusicRecord != null ? 
-                          View(await _context.MusicRecord.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.MusicRecord'  is null.");
+            var query = _context.MusicRecord.AsQueryable();
+            if (!string.IsNullOrEmpty(orderBy))
+            {
+                bool desc = "desc".Equals(orderDirection, StringComparison.OrdinalIgnoreCase);
+                switch(orderBy)
+                {
+                    case nameof(MusicRecord.Name) :
+                        query = desc ? query.OrderByDescending(x => x.Name) : query.OrderBy(x => x.Name);
+                        break;
+                    case nameof(MusicRecord.Artist):
+                        query = desc ? query.OrderByDescending(x => x.Artist) : query.OrderBy(x => x.Artist);
+                        break;
+                    case nameof(MusicRecord.Genre):
+                        query = desc ? query.OrderByDescending(x => x.Genre) : query.OrderBy(x => x.Genre);
+                        break;
+                }
+            }
+            else
+            {
+                query = query.OrderByDescending(x => x.Year);
+            }
+            if (!string.IsNullOrEmpty(searchText))
+            {
+                bool isyear = int.TryParse(searchText, out int year);
+                string filter = searchText.Trim().ToLower();
+                query = query.Where(x => (isyear && x.Year == year) ||
+                                                                    (x.Name.Contains(filter) ||
+                                                                    x.Artist.Contains(filter) ||
+                                                                    x.Genre.Contains(filter))
+                                                                    );
+
+            }
+
+            return View(await query.ToListAsync());
+
         }
 
         // GET: MusicRecords/SearchForm
@@ -34,11 +66,11 @@ namespace MusicApp.Controllers
         }
 
         // POST: MusicRecords/SearchForm
-        public async Task<IActionResult> SearchResults(String SearchText)
+        public async Task<IActionResult> SearchResults(string SearchText)
         {
             return View("Index", await _context.MusicRecord.Where(j => j.Name.Contains(SearchText) || j.Artist.Contains(SearchText)
                                                                         || j.Genre.Contains(SearchText)).ToListAsync());
-                                               //trying to search by Year throws exception
+
         }
 
         // GET: MusicRecords/Details/5
@@ -164,14 +196,14 @@ namespace MusicApp.Controllers
             {
                 _context.MusicRecord.Remove(musicRecord);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool MusicRecordExists(int id)
         {
-          return (_context.MusicRecord?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.MusicRecord?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
