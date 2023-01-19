@@ -23,26 +23,24 @@ namespace MusicApp.Controllers
         public async Task<IActionResult> Index([FromQuery(Name = "q")] string searchText, string orderBy, string orderDirection)
         {
             var query = _context.MusicRecord.AsQueryable();
-            if (!string.IsNullOrEmpty(orderBy))
+            bool desc = "desc".Equals(orderDirection, StringComparison.OrdinalIgnoreCase);
+            switch (orderBy)
             {
-                bool desc = "desc".Equals(orderDirection, StringComparison.OrdinalIgnoreCase);
-                switch(orderBy)
-                {
-                    case nameof(MusicRecord.Name) :
-                        query = desc ? query.OrderByDescending(x => x.Name) : query.OrderBy(x => x.Name);
-                        break;
-                    case nameof(MusicRecord.Artist):
-                        query = desc ? query.OrderByDescending(x => x.Artist) : query.OrderBy(x => x.Artist);
-                        break;
-                    case nameof(MusicRecord.Genre):
-                        query = desc ? query.OrderByDescending(x => x.Genre) : query.OrderBy(x => x.Genre);
-                        break;
-                }
+                case nameof(MusicRecord.Name):
+                    query = desc ? query.OrderByDescending(x => x.Name) : query.OrderBy(x => x.Name);
+                    break;
+                case nameof(MusicRecord.Artist):
+                    query = desc ? query.OrderByDescending(x => x.Artist) : query.OrderBy(x => x.Artist);
+                    break;
+                case nameof(MusicRecord.Genre):
+                    query = desc ? query.OrderByDescending(x => x.Genre) : query.OrderBy(x => x.Genre);
+                    break;
+                default:
+                    query = query.OrderByDescending(x => x.Year);
+                    break;
+
             }
-            else
-            {
-                query = query.OrderByDescending(x => x.Year);
-            }
+          
             if (!string.IsNullOrEmpty(searchText))
             {
                 bool isyear = int.TryParse(searchText, out int year);
