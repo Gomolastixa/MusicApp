@@ -7,16 +7,12 @@ namespace MusicApp.Models
      
         public int Id { get; set; }
         public string Name { get; set; }
-        [Display(Name="Καλλιτεχνης")]
+        
         public string Artist { get; set; }
         public int Year { get; set; }
         public string? Genre { get; set; }
 
 
-        public MusicRecord()
-        {
-
-        }
-
+       public List<RecordMember> RecordMembers { get; set; }
     }
 }
