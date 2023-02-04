@@ -79,8 +79,9 @@ namespace MusicApp.Controllers
                 return NotFound();
             }
 
-            var musicRecord = await _context.MusicRecord
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var musicRecord = await _context.MusicRecord.Include(rm => rm.RecordMembers)
+                                                        .ThenInclude(m => m.Musician)
+                                                        .FirstOrDefaultAsync(m => m.Id == id);
             if (musicRecord == null)
             {
                 return NotFound();
@@ -102,6 +103,7 @@ namespace MusicApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Artist,Year,Genre")] MusicRecord musicRecord)
         {
+         
             if (ModelState.IsValid)
             {
                 _context.Add(musicRecord);

@@ -24,7 +24,7 @@ namespace MusicApp.Controllers
         //GET : api/SearchRecordsAPI
         [HttpGet("search")]
 
-        public async Task<ActionResult<IEnumerable<MusicRecord>>> Search([FromQuery(Name = "q")] string searchText, string? orderBy, string? orderDirection)
+        public async Task<ActionResult<IEnumerable<MusicRecord>>> Search([FromQuery(Name = "term")] string searchText, string? orderBy, string? orderDirection)
         {
             var query = _context.MusicRecord.AsQueryable();
             bool desc = "desc".Equals(orderDirection, StringComparison.OrdinalIgnoreCase);

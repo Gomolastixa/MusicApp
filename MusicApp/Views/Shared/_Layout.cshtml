@@ -6,6 +6,7 @@
     <title>@ViewData["Title"] - MusicApp</title>
     <link rel="stylesheet" href="~/css/bootsTheme.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     
 </head>
@@ -41,7 +42,7 @@
                         </li>*@
                     </ul>
                     <form asp-controller="MusicRecords" asp-action="Index" method="get" class="d-flex">
-                        <input class="form-control me-sm-2" type="search" name="q" value="@Context.Request.Query["q"]">
+                        <input class="form-control me-sm-2" id="searchAc" type="search" name="q" value="@Context.Request.Query["q"]">
                         
                         <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
                     </form>
@@ -63,9 +64,10 @@
             &copy; 2022 - MusicApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    
+    <script src="~/lib/jquery/dist/jquery.min.js"></script> 
+    @*<script src="https://code.jquery.com/jquery-3.6.0.js"></script>*@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

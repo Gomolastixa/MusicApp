@@ -25,7 +25,7 @@ namespace MusicApp.Data
                         .WithMany(rm => rm.RecordMembers)
                         .HasForeignKey(mi => mi.MusicianId);
         }
-        public DbSet<MusicApp.Models.MusicRecord> MusicRecord { get; set; } = default!;
+        public DbSet<MusicRecord> MusicRecord { get; set; } = default!;
 
         public DbSet<Musician> Musicians { get; set; }
 

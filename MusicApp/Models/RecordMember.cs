@@ -4,11 +4,11 @@
     {
         public int Id { get; set; }
         public int MusicRecordId { get; set; }
-        public MusicRecord MusicRecord { get; set; }
+        public virtual MusicRecord MusicRecord { get; set; }
 
 
 
         public int MusicianId { get; set; }
-        public Musician Musician { get; set; } 
+        public virtual Musician Musician { get; set; } 
     }
 }

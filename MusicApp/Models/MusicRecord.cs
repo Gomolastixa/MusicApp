@@ -13,6 +13,6 @@ namespace MusicApp.Models
         public string? Genre { get; set; }
 
 
-       public List<RecordMember> RecordMembers { get; set; }
+       public virtual ICollection<RecordMember> RecordMembers { get; set; }
     }
 }

@@ -50,9 +50,11 @@
                 @Html.DisplayFor(modelItem => item.Genre)
             </td>
             <td class="text-end">
-                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm">
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm m-1">
                             <i class="bi bi-pencil"></i> Edit </a> &nbsp;
-                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm">
+                <a  asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm m-1">
+                            <i class="bi bi-person-circle"></i> Members </a> &nbsp;
+                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm m-1">
                             <i class="bi bi-trash2-fill"></i> Delete </a>
             </td>
         </tr>
