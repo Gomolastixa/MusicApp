@@ -22,8 +22,14 @@ namespace MusicApp.Controllers
         // GET: MusicRecords
         public async Task<IActionResult> Index([FromQuery(Name = "q")] string searchText, string orderBy, string orderDirection)
         {
+
+            ViewBag.OrderDir = String.IsNullOrEmpty(orderDirection) ? "desc" : "";
+
             var query = _context.MusicRecord.AsQueryable();
             bool desc = "desc".Equals(orderDirection, StringComparison.OrdinalIgnoreCase);
+
+            
+
             switch (orderBy)
             {
                 case nameof(MusicRecord.Name):
@@ -32,11 +38,14 @@ namespace MusicApp.Controllers
                 case nameof(MusicRecord.Artist):
                     query = desc ? query.OrderByDescending(x => x.Artist) : query.OrderBy(x => x.Artist);
                     break;
+                case nameof(MusicRecord.Year):
+                    query = desc ? query.OrderByDescending(x => x.Year) : query.OrderBy(x => x.Year);
+                    break;
                 case nameof(MusicRecord.Genre):
                     query = desc ? query.OrderByDescending(x => x.Genre) : query.OrderBy(x => x.Genre);
                     break;
                 default:
-                    query = query.OrderByDescending(x => x.Year);
+                    query = query.OrderBy(x => x.Name);
                     break;
 
             }
