@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +14,12 @@ namespace MusicApp.Controllers
     public class MusicRecordsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public MusicRecordsController(ApplicationDbContext context)
+        public MusicRecordsController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: MusicRecords
@@ -110,16 +113,17 @@ namespace MusicApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Artist,Year,Genre")] MusicRecord musicRecord)
+        public async Task<IActionResult> Create([Bind("Id,Name,Artist,Year,Genre")] CreateMusicRecordDto musicRecordDto)
         {
          
             if (ModelState.IsValid)
             {
+                var musicRecord = _mapper.Map<MusicRecord>(musicRecordDto);
                 _context.Add(musicRecord);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(musicRecord);
+            return View(musicRecordDto);
         }
 
         // GET: MusicRecords/Edit/5
@@ -143,9 +147,9 @@ namespace MusicApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Artist,Year,Genre")] MusicRecord musicRecord)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Artist,Year,Genre")] EditMusicRecordDto musicRecordDto)
         {
-            if (id != musicRecord.Id)
+            if (id != musicRecordDto.Id)
             {
                 return NotFound();
             }
@@ -154,12 +158,13 @@ namespace MusicApp.Controllers
             {
                 try
                 {
+                    var musicRecord = _mapper.Map<MusicRecord>(musicRecordDto);
                     _context.Update(musicRecord);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!MusicRecordExists(musicRecord.Id))
+                    if (!MusicRecordExists(musicRecordDto.Id))
                     {
                         return NotFound();
                     }
@@ -170,7 +175,7 @@ namespace MusicApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(musicRecord);
+            return View(musicRecordDto);
         }
 
         // GET: MusicRecords/Delete/5

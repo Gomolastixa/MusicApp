@@ -1,28 +1,54 @@
-﻿@model MusicApp.Models.Musician
+﻿@model Musician
 
 @{
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>Artist Info</h1>
 
 <div>
-    <h4>Musician</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.FullName)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.FullName)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Instrument)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Instrument)
         </dd>
     </dl>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>
+                   Played in
+                </th>
+                <th>
+                    By
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model.RecordMembers)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(model => item.MusicRecord.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.MusicRecord.Artist)
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
