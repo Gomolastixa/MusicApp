@@ -8,17 +8,20 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MusicApp.Data;
 using MusicApp.Models;
+using MusicApp.Services;
 
 namespace MusicApp.Controllers
 {
     public class MusicRecordsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMusicRecordInterface _musicRecordInterface;
         private readonly IMapper _mapper;
 
-        public MusicRecordsController(ApplicationDbContext context, IMapper mapper)
+        public MusicRecordsController(ApplicationDbContext context, IMusicRecordInterface musicRecordInterface, IMapper mapper)
         {
             _context = context;
+            _musicRecordInterface = musicRecordInterface;
             _mapper = mapper;
         }
 
@@ -31,7 +34,7 @@ namespace MusicApp.Controllers
             var query = _context.MusicRecord.AsQueryable();
             bool desc = "desc".Equals(orderDirection, StringComparison.OrdinalIgnoreCase);
 
-            
+
 
             switch (orderBy)
             {
@@ -52,7 +55,7 @@ namespace MusicApp.Controllers
                     break;
 
             }
-          
+
             if (!string.IsNullOrEmpty(searchText))
             {
                 bool isyear = int.TryParse(searchText, out int year);
@@ -115,7 +118,7 @@ namespace MusicApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Artist,Year,Genre")] CreateMusicRecordDto musicRecordDto)
         {
-         
+
             if (ModelState.IsValid)
             {
                 var musicRecord = _mapper.Map<MusicRecord>(musicRecordDto);
@@ -124,6 +127,60 @@ namespace MusicApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(musicRecordDto);
+        }
+
+        //POST: MusicRecords/AddRecordMember
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddRecordMember(int id, Musician musician)
+        {
+            // αμα παρει EditMusicianDto κανει add αλλα δεν φαινεται στο table (γιατι δεν εχει τα record members του)
+            //var musician = _mapper.Map<Musician>(musicianDto);
+
+            // αμα παρει CreateMusicianDto (βγαζει null το var musician)
+            //var musicianFilter = _mapper.Map<Musician>(musicianDto);
+            //var musician = await _context.Musicians.Include(rm => rm.RecordMembers)
+            //                                       .ThenInclude(mr => mr.MusicRecord)
+            //                                       .FirstOrDefaultAsync(m => m.FullName == musicianFilter.FullName);
+
+
+
+            var recordMember = new RecordMember { MusicRecordId = id, MusicianId = musician.Id };
+
+            _context.Add(recordMember);
+            await _context.SaveChangesAsync();
+
+            var musicRecord = await _context.MusicRecord.Include(rm => rm.RecordMembers)
+                                                        .ThenInclude(m => m.Musician)
+                                                        .FirstOrDefaultAsync(mr => mr.Id == id);
+
+            return View("Details", musicRecord);
+        }
+       
+        public async Task<IActionResult> DeleteMusician(int id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var recordMemberToDelete = await _context.RecordMembers.FirstOrDefaultAsync(rm => rm.Id == id);
+            
+
+            if (recordMemberToDelete != null)
+            {
+                _context.RecordMembers.Remove(recordMemberToDelete);
+            }
+
+            var musicRecord = await _context.MusicRecord.Include(rm => rm.RecordMembers)
+                                                        .ThenInclude(m => m.Musician)
+                                                        .FirstOrDefaultAsync(mr => mr.Id == recordMemberToDelete.MusicRecordId);
+
+            await _context.SaveChangesAsync();
+
+            
+            return RedirectToAction("Details", musicRecord);
+
         }
 
         // GET: MusicRecords/Edit/5

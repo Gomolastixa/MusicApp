@@ -31,6 +31,7 @@
                 <th>
                     By
                 </th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -43,6 +44,9 @@
                     </td>
                     <td>
                         @Html.DisplayFor(model => item.MusicRecord.Artist)
+                    </td>
+                    <td class="text-end">
+                        <a asp-action="DeleteRecord" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm m-1"> Remove Record </a>
                     </td>
                 </tr>
             }

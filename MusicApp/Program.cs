@@ -2,6 +2,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using MusicApp.Configurations;
 using MusicApp.Data;
+using MusicApp.Interfaces;
+using MusicApp.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ApplicationDbContext") ?? throw new InvalidOperationException("Connection string 'ApplicationDbContext' not found.")));
@@ -10,6 +13,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddAutoMapper(typeof(MapperConfig));
+
+builder.Services.AddScoped<IMusicRecordInterface, MusicRecordInterface>();
 
 var app = builder.Build();
 

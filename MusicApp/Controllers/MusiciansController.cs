@@ -51,6 +51,13 @@ namespace MusicApp.Controllers
         }
 
         // GET: Musicians/Create
+        public IActionResult MemberAdd(int id)
+        {
+
+            return View();
+        }
+
+        // GET: Musicians/Create
         public IActionResult Create()
         {
             return View();
@@ -124,6 +131,33 @@ namespace MusicApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(musicianDto);
+        }
+
+       
+        public async Task<IActionResult> DeleteRecord(int id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var recordMemberToDelete = await _context.RecordMembers.FirstOrDefaultAsync(rm => rm.Id == id);
+
+
+            if (recordMemberToDelete != null)
+            {
+                _context.RecordMembers.Remove(recordMemberToDelete);
+            }
+
+            var musician = await _context.Musicians.Include(rm => rm.RecordMembers)
+                                                   .ThenInclude(mr => mr.MusicRecord)
+                                                   .FirstOrDefaultAsync(mr => mr.Id == recordMemberToDelete.MusicianId);
+
+            await _context.SaveChangesAsync();
+
+
+            return RedirectToAction("Details", musician);
+
         }
 
         // GET: Musicians/Delete/5
