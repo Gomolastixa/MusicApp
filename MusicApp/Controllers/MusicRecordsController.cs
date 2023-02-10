@@ -122,26 +122,22 @@ namespace MusicApp.Controllers
             if (ModelState.IsValid)
             {
                 var musicRecord = _mapper.Map<MusicRecord>(musicRecordDto);
-                _context.Add(musicRecord);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
+                //_context.Add(musicRecord);
+                //await _context.SaveChangesAsync();
+                 await _musicRecordInterface.AddAsync(musicRecord);
+                return RedirectToAction(nameof(Index)); // Με γυρναει στο View(musicRecordDto)
+            }       
             return View(musicRecordDto);
         }
 
         //POST: MusicRecords/AddRecordMember
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddRecordMember(int id, Musician musician)
-        {
-            // αμα παρει EditMusicianDto κανει add αλλα δεν φαινεται στο table (γιατι δεν εχει τα record members του)
-            //var musician = _mapper.Map<Musician>(musicianDto);
-
-            // αμα παρει CreateMusicianDto (βγαζει null το var musician)
-            //var musicianFilter = _mapper.Map<Musician>(musicianDto);
-            //var musician = await _context.Musicians.Include(rm => rm.RecordMembers)
-            //                                       .ThenInclude(mr => mr.MusicRecord)
-            //                                       .FirstOrDefaultAsync(m => m.FullName == musicianFilter.FullName);
+        public async Task<IActionResult> AddRecordMember(int id, CreateMusicianDto musicianDto)
+        {           
+            var musician = await _context.Musicians.Include(rm => rm.RecordMembers)
+                                                   .ThenInclude(mr => mr.MusicRecord)
+                                                   .FirstOrDefaultAsync(m => m.FullName == musicianDto.FullName);
 
 
 
@@ -154,7 +150,7 @@ namespace MusicApp.Controllers
                                                         .ThenInclude(m => m.Musician)
                                                         .FirstOrDefaultAsync(mr => mr.Id == id);
 
-            return View("Details", musicRecord);
+            return View("Details",musicRecord);
         }
        
         public async Task<IActionResult> DeleteMusician(int id)
@@ -179,7 +175,7 @@ namespace MusicApp.Controllers
             await _context.SaveChangesAsync();
 
             
-            return RedirectToAction("Details", musicRecord);
+            return View("Details", musicRecord);
 
         }
 

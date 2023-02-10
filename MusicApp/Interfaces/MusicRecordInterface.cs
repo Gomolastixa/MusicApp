@@ -5,23 +5,18 @@ using MusicApp.Services;
 
 namespace MusicApp.Interfaces
 {
-    public class MusicRecordInterface : IMusicRecordInterface
+    public class MusicRecordInterface : GenericInterface<MusicRecord>, IMusicRecordInterface
     {
         private readonly ApplicationDbContext _context;
 
-        public MusicRecordInterface(ApplicationDbContext context)
+        public MusicRecordInterface(ApplicationDbContext context) : base(context)
         {
             _context = context;
 
         }
 
-        public async void AddMemberAsync(int id, Musician musician)
-        {
-            var recordMember = new RecordMember { MusicRecordId = id,MusicianId= musician.Id };
-
-            _context.Add(recordMember);
-            await _context.SaveChangesAsync();
+    
            
-        }
+        
     }
 }

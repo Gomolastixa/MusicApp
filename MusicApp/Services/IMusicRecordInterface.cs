@@ -2,8 +2,8 @@
 
 namespace MusicApp.Services
 {
-    public interface IMusicRecordInterface
+    public interface IMusicRecordInterface : IGenericInterface<MusicRecord>
     {
-      void AddMemberAsync(int id, Musician musician);
+      
     }
 }
