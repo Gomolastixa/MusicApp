@@ -21,22 +21,22 @@
             <tr>
                 <th>
                     @Html.ActionLink(@Html.DisplayNameFor(model => model.Name), "Index",
-                    new {orderBy = "Name", orderDirection = ViewBag.OrderDir},
-                    new{style="text-decoration:none", @class = "text-light"})
+                    new {q = ViewBag.SearchText, orderBy = "Name", orderDirection = ViewBag.OrderDir},
+                    new{style = "text-decoration:none", @class = "text-light"})
                 </th>
                 <th>
                     @Html.ActionLink(@Html.DisplayNameFor(model => model.Artist), "Index",
-                    new {orderBy = "Artist", orderDirection = ViewBag.OrderDir},
-                    new{style="text-decoration:none", @class = "text-light"})
+                    new {q = ViewBag.SearchText, orderBy = "Artist", orderDirection = ViewBag.OrderDir},
+                    new{style = "text-decoration:none", @class = "text-light"})
                 <th>
                         @Html.ActionLink(@Html.DisplayNameFor(model => model.Year), "Index",
-                    new {orderBy = "Year", orderDirection = ViewBag.OrderDir},
-                    new{style="text-decoration:none", @class = "text-light"})
+                    new {q = ViewBag.SearchText, orderBy = "Year", orderDirection = ViewBag.OrderDir},
+                    new{style = "text-decoration:none", @class = "text-light"})
                 </th>
                 <th>
                         @Html.ActionLink(@Html.DisplayNameFor(model => model.Genre), "Index",
-                    new {orderBy = "Genre", orderDirection = ViewBag.OrderDir},
-                    new{style="text-decoration:none", @class = "text-light"})
+                    new {q = ViewBag.SearchText, orderBy = "Genre", orderDirection = ViewBag.OrderDir},
+                    new{style = "text-decoration:none", @class = "text-light"})
                 </th>
                 <th></th>
             </tr>

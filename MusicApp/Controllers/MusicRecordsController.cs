@@ -16,19 +16,21 @@ namespace MusicApp.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IMusicRecordInterface _musicRecordInterface;
+        private readonly IMusicianInterface _musicianInterface;
         private readonly IMapper _mapper;
 
-        public MusicRecordsController(ApplicationDbContext context, IMusicRecordInterface musicRecordInterface, IMapper mapper)
+        public MusicRecordsController(ApplicationDbContext context, IMusicRecordInterface musicRecordInterface, IMusicianInterface musicianInterface, IMapper mapper)
         {
             _context = context;
             _musicRecordInterface = musicRecordInterface;
+            _musicianInterface = musicianInterface;
             _mapper = mapper;
         }
 
         // GET: MusicRecords
         public async Task<IActionResult> Index([FromQuery(Name = "q")] string searchText, string orderBy, string orderDirection)
         {
-
+            ViewBag.SearchText = searchText;
             ViewBag.OrderDir = String.IsNullOrEmpty(orderDirection) ? "desc" : "";
 
             var query = _context.MusicRecord.AsQueryable();
@@ -124,9 +126,9 @@ namespace MusicApp.Controllers
                 var musicRecord = _mapper.Map<MusicRecord>(musicRecordDto);
                 //_context.Add(musicRecord);
                 //await _context.SaveChangesAsync();
-                 await _musicRecordInterface.AddAsync(musicRecord);
+                await _musicRecordInterface.AddAsync(musicRecord);
                 return RedirectToAction(nameof(Index)); // Με γυρναει στο View(musicRecordDto)
-            }       
+            }
             return View(musicRecordDto);
         }
 
@@ -134,7 +136,13 @@ namespace MusicApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddRecordMember(int id, CreateMusicianDto musicianDto)
-        {           
+        {
+            if(await _context.Musicians.FirstOrDefaultAsync(m => m.FullName == musicianDto.FullName) == null)
+            {
+                var newMusician = _mapper.Map<Musician>(musicianDto);
+                await _musicianInterface.AddAsync(newMusician);
+            }
+
             var musician = await _context.Musicians.Include(rm => rm.RecordMembers)
                                                    .ThenInclude(mr => mr.MusicRecord)
                                                    .FirstOrDefaultAsync(m => m.FullName == musicianDto.FullName);
@@ -150,9 +158,9 @@ namespace MusicApp.Controllers
                                                         .ThenInclude(m => m.Musician)
                                                         .FirstOrDefaultAsync(mr => mr.Id == id);
 
-            return View("Details",musicRecord);
+            return View("Details", musicRecord);
         }
-       
+
         public async Task<IActionResult> DeleteMusician(int id)
         {
             if (id == null)
@@ -161,7 +169,7 @@ namespace MusicApp.Controllers
             }
 
             var recordMemberToDelete = await _context.RecordMembers.FirstOrDefaultAsync(rm => rm.Id == id);
-            
+
 
             if (recordMemberToDelete != null)
             {
@@ -174,7 +182,7 @@ namespace MusicApp.Controllers
 
             await _context.SaveChangesAsync();
 
-            
+
             return View("Details", musicRecord);
 
         }

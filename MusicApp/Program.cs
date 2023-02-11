@@ -15,6 +15,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddAutoMapper(typeof(MapperConfig));
 
 builder.Services.AddScoped<IMusicRecordInterface, MusicRecordInterface>();
+builder.Services.AddScoped<IMusicianInterface, MusicianInterface>();
+
 
 var app = builder.Build();
 
