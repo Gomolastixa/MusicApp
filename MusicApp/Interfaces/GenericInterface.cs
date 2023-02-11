@@ -1,4 +1,6 @@
-﻿using MusicApp.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using MusicApp.Data;
+using MusicApp.Models;
 using MusicApp.Services;
 
 namespace MusicApp.Interfaces
@@ -21,13 +23,15 @@ namespace MusicApp.Interfaces
 
         }
 
-        public async Task<T> CreateRecordMemberASync(int id,T entity)
+        public async Task<T> CreateRecordMemberASync(int id, T entity)
         {
-            
+
             await _context.SaveChangesAsync();
 
 
             return entity;
         }
+
+      
     }
 }

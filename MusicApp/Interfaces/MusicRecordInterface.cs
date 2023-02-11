@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MusicApp.Data;
 using MusicApp.Models;
 using MusicApp.Services;
@@ -15,8 +16,15 @@ namespace MusicApp.Interfaces
 
         }
 
-    
-           
-        
+        public async Task<MusicRecord> GetByIdAsync(int? id)
+        {
+
+            return await _context.MusicRecord.Include(rm => rm.RecordMembers)
+                                 .ThenInclude(m => m.Musician)
+                                 .FirstOrDefaultAsync(mr => mr.Id == id);
+
+        }
+
+
     }
 }

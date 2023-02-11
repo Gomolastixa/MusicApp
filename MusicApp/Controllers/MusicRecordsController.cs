@@ -96,9 +96,8 @@ namespace MusicApp.Controllers
                 return NotFound();
             }
 
-            var musicRecord = await _context.MusicRecord.Include(rm => rm.RecordMembers)
-                                                        .ThenInclude(m => m.Musician)
-                                                        .FirstOrDefaultAsync(m => m.Id == id);
+            var musicRecord = await _musicRecordInterface.GetByIdAsync(id);
+
             if (musicRecord == null)
             {
                 return NotFound();
@@ -137,7 +136,7 @@ namespace MusicApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddRecordMember(int id, CreateMusicianDto musicianDto)
         {
-            if(await _context.Musicians.FirstOrDefaultAsync(m => m.FullName == musicianDto.FullName) == null)
+            if (await _context.Musicians.FirstOrDefaultAsync(m => m.FullName == musicianDto.FullName) == null)
             {
                 var newMusician = _mapper.Map<Musician>(musicianDto);
                 await _musicianInterface.AddAsync(newMusician);
