@@ -106,6 +106,14 @@ namespace MusicApp.Controllers
             return View(musicRecord);
         }
 
+        // GET: MusicRecords/RecordAdd
+        public IActionResult RecordAdd(int id)
+        {
+
+            return View();
+        }
+
+
         // GET: MusicRecords/Create
         public IActionResult Create()
         {

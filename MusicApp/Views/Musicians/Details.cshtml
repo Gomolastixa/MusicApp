@@ -31,6 +31,9 @@
                 <th>
                     By
                 </th>
+                <th>
+                    Released
+                </th>
                 <th></th>
             </tr>
         </thead>
@@ -45,6 +48,9 @@
                     <td>
                         @Html.DisplayFor(model => item.MusicRecord.Artist)
                     </td>
+                    <td>
+                        @Html.DisplayFor(model => item.MusicRecord.Year)
+                    </td>
                     <td class="text-end">
                         <a asp-action="DeleteRecord" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm m-1"> Remove Record </a>
                     </td>
@@ -55,6 +61,6 @@
     </table>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-controller="MusicRecords" asp-action="RecordAdd" asp-route-id="@Model?.Id">Add a Record</a> |
     <a asp-action="Index">Back to List</a>
 </div>

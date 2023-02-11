@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace MusicApp.Models
 {
@@ -6,9 +7,11 @@ namespace MusicApp.Models
     {
      
         public int Id { get; set; }
+        [DisplayName ("Title")]
         public string Name { get; set; }
         
         public string Artist { get; set; }
+        [DisplayName ("Released In")]
         public int Year { get; set; }
         public string? Genre { get; set; }
 

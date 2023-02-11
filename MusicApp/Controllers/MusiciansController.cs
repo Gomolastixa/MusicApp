@@ -8,18 +8,22 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using MusicApp.Data;
+using MusicApp.Interfaces;
 using MusicApp.Models;
+using MusicApp.Services;
 
 namespace MusicApp.Controllers
 {
     public class MusiciansController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMusicRecordInterface _musicRecordInterface;
         private readonly IMapper _mapper;
 
-        public MusiciansController(ApplicationDbContext context, IMapper mapper)
+        public MusiciansController(ApplicationDbContext context, IMusicRecordInterface musicRecordInterface, IMapper mapper)
         {
             _context = context;
+            _musicRecordInterface = musicRecordInterface;
             _mapper = mapper;
         }
 
@@ -50,7 +54,7 @@ namespace MusicApp.Controllers
             return View(musician);
         }
 
-        // GET: Musicians/Create
+        // GET: Musicians/MemberAdd
         public IActionResult MemberAdd(int id)
         {
 
@@ -78,6 +82,35 @@ namespace MusicApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(musicianDto);
+        }
+
+        //POST: Musicians/AddRecordPlayed
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddRecordPlayed(int id, CreateMusicRecordDto musicRecordDto)
+        {
+            if (await _context.MusicRecord.FirstOrDefaultAsync(m => m.Name == musicRecordDto.Name) == null)
+            {
+                var newMusicRecord = _mapper.Map<MusicRecord>(musicRecordDto);
+                await _musicRecordInterface.AddAsync(newMusicRecord);
+            }
+
+            var musicRecord = await _context.MusicRecord.Include(rm => rm.RecordMembers)
+                                                        .ThenInclude(m => m.Musician)
+                                                        .FirstOrDefaultAsync(mr => mr.Name == musicRecordDto.Name);
+
+
+
+            var recordMember = new RecordMember { MusicRecordId = musicRecord.Id, MusicianId = id };
+
+            _context.Add(recordMember);
+            await _context.SaveChangesAsync();
+
+            var musician = await _context.Musicians.Include(rm => rm.RecordMembers)
+                                                   .ThenInclude(mr => mr.MusicRecord)
+                                                   .FirstOrDefaultAsync(m => m.Id == id);
+
+            return View("Details", musician);
         }
 
         // GET: Musicians/Edit/5
@@ -133,7 +166,7 @@ namespace MusicApp.Controllers
             return View(musicianDto);
         }
 
-       
+
         public async Task<IActionResult> DeleteRecord(int id)
         {
             if (id == null)
