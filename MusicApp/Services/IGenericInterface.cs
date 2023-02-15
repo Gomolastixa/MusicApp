@@ -6,5 +6,9 @@
         Task<T> AddAsync(T entity);
         Task<T> CreateRecordMemberASync(int id,T entity);
 
+        Task UpdateAsync(T entity);
+
+        
+
     }
 }

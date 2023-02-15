@@ -1,6 +1,6 @@
 ﻿@model MusicApp.Models.MusicRecord
 
-<h4>MusicRecord</h4>
+<h3>Record Details</h3>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -28,12 +28,12 @@
                 <span asp-validation-for="Genre" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Add" class="btn btn-primary m-2" />
+                <input type="submit" value="Add" class="btn btn-primary mt-4" />
             </div>
         </form>
     </div>
 </div>
-
+<br />
 <div>
     <a asp-controller="Musicians" asp-action="Index">Musicians List</a>
 </div>

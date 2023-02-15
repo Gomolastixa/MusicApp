@@ -31,7 +31,12 @@ namespace MusicApp.Interfaces
 
             return entity;
         }
+     
 
-      
+        public async Task UpdateAsync(T entity)
+        {
+            _context.Update(entity);
+            await _context.SaveChangesAsync();
+        }
     }
 }

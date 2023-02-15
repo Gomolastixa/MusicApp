@@ -91,7 +91,7 @@ namespace MusicApp.Controllers
         // GET: MusicRecords/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.MusicRecord == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -125,17 +125,17 @@ namespace MusicApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Artist,Year,Genre")] CreateMusicRecordDto musicRecordDto)
+        public async Task<IActionResult> Create([Bind("Name,Artist,Year,Genre")] CreateMusicRecordDto musicRecordDto)
         {
 
             if (ModelState.IsValid)
             {
                 var musicRecord = _mapper.Map<MusicRecord>(musicRecordDto);
-                //_context.Add(musicRecord);
-                //await _context.SaveChangesAsync();
                 await _musicRecordInterface.AddAsync(musicRecord);
-                return RedirectToAction(nameof(Index)); // Με γυρναει στο View(musicRecordDto)
+
+                return RedirectToAction(nameof(Index));
             }
+
             return View(musicRecordDto);
         }
 
@@ -144,39 +144,31 @@ namespace MusicApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddRecordMember(int id, CreateMusicianDto musicianDto)
         {
-            if (await _context.Musicians.FirstOrDefaultAsync(m => m.FullName == musicianDto.FullName) == null)
+            if (await _musicianInterface.GetByNameAsync(musicianDto.FullName) == null)
             {
                 var newMusician = _mapper.Map<Musician>(musicianDto);
                 await _musicianInterface.AddAsync(newMusician);
             }
 
-            var musician = await _context.Musicians.Include(rm => rm.RecordMembers)
-                                                   .ThenInclude(mr => mr.MusicRecord)
-                                                   .FirstOrDefaultAsync(m => m.FullName == musicianDto.FullName);
+            var musician = await _musicianInterface.GetByNameAsync(musicianDto.FullName);
 
 
-            if(await _context.RecordMembers.FirstOrDefaultAsync(rm => rm.MusicRecordId == id && rm.MusicianId == musician.Id) == null)
+            if (await _context.RecordMembers.FirstOrDefaultAsync(rm => rm.MusicRecordId == id && rm.MusicianId == musician.Id) == null)
             {
                 var recordMember = new RecordMember { MusicRecordId = id, MusicianId = musician.Id };
 
                 _context.Add(recordMember);
                 await _context.SaveChangesAsync();
-                
+
             }
 
-            var musicRecord = await _context.MusicRecord.Include(rm => rm.RecordMembers)
-                                                            .ThenInclude(m => m.Musician)
-                                                            .FirstOrDefaultAsync(mr => mr.Id == id);
+            var musicRecord = await _musicRecordInterface.GetByIdAsync(id);
 
             return RedirectToAction("Details", musicRecord);
         }
 
         public async Task<IActionResult> DeleteMusician(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
             var recordMemberToDelete = await _context.RecordMembers.FirstOrDefaultAsync(rm => rm.Id == id);
 
@@ -184,13 +176,11 @@ namespace MusicApp.Controllers
             if (recordMemberToDelete != null)
             {
                 _context.RecordMembers.Remove(recordMemberToDelete);
+                await _context.SaveChangesAsync();
             }
 
-            var musicRecord = await _context.MusicRecord.Include(rm => rm.RecordMembers)
-                                                        .ThenInclude(m => m.Musician)
-                                                        .FirstOrDefaultAsync(mr => mr.Id == recordMemberToDelete.MusicRecordId);
+            var musicRecord = await _musicRecordInterface.GetByIdAsync(recordMemberToDelete.MusicRecordId);
 
-            await _context.SaveChangesAsync();
 
 
             return RedirectToAction("Details", musicRecord);
@@ -200,12 +190,13 @@ namespace MusicApp.Controllers
         // GET: MusicRecords/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.MusicRecord == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var musicRecord = await _context.MusicRecord.FindAsync(id);
+            var musicRecord = await _musicRecordInterface.GetByIdAsync(id);
+
             if (musicRecord == null)
             {
                 return NotFound();
@@ -230,12 +221,11 @@ namespace MusicApp.Controllers
                 try
                 {
                     var musicRecord = _mapper.Map<MusicRecord>(musicRecordDto);
-                    _context.Update(musicRecord);
-                    await _context.SaveChangesAsync();
+                    await _musicRecordInterface.UpdateAsync(musicRecord);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!MusicRecordExists(musicRecordDto.Id))
+                    if (!await MusicRecordExists(musicRecordDto.Id))
                     {
                         return NotFound();
                     }
@@ -252,13 +242,13 @@ namespace MusicApp.Controllers
         // GET: MusicRecords/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.MusicRecord == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var musicRecord = await _context.MusicRecord
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var musicRecord = await _musicRecordInterface.GetByIdAsync(id);
+
             if (musicRecord == null)
             {
                 return NotFound();
@@ -272,23 +262,19 @@ namespace MusicApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.MusicRecord == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.MusicRecord'  is null.");
-            }
-            var musicRecord = await _context.MusicRecord.FindAsync(id);
-            if (musicRecord != null)
-            {
-                _context.MusicRecord.Remove(musicRecord);
-            }
+            //if (_context.MusicRecord == null)
+            //{
+            //    return Problem("Entity set 'ApplicationDbContext.MusicRecord'  is null.");
+            //}
+           
+            await _musicRecordInterface.DeleteAsync(id);
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool MusicRecordExists(int id)
+        private async Task<bool> MusicRecordExists(int id)
         {
-            return (_context.MusicRecord?.Any(e => e.Id == id)).GetValueOrDefault();
+           return await _musicRecordInterface.Exists(id);
         }
     }
 }

@@ -20,11 +20,30 @@ namespace MusicApp.Interfaces
         {
 
             return await _context.MusicRecord.Include(rm => rm.RecordMembers)
-                                 .ThenInclude(m => m.Musician)
-                                 .FirstOrDefaultAsync(mr => mr.Id == id);
+                                             .ThenInclude(m => m.Musician)
+                                             .FirstOrDefaultAsync(mr => mr.Id == id);
 
         }
 
+        public async Task<MusicRecord> GetByNameAsync(string name)
+        {
+            return await _context.MusicRecord.Include(rm => rm.RecordMembers)
+                                             .ThenInclude(m => m.Musician)
+                                             .FirstOrDefaultAsync(mr => mr.Name == name);
+        }
 
+        public async Task DeleteAsync(int id)
+        {
+            var musicRecord = await GetByIdAsync(id);
+            _context.MusicRecord.Remove(musicRecord);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> Exists(int id)
+        {
+            var e = await GetByIdAsync(id);
+
+            return e != null;
+        }
     }
 }
