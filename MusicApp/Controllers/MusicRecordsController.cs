@@ -155,17 +155,20 @@ namespace MusicApp.Controllers
                                                    .FirstOrDefaultAsync(m => m.FullName == musicianDto.FullName);
 
 
+            if(await _context.RecordMembers.FirstOrDefaultAsync(rm => rm.MusicRecordId == id && rm.MusicianId == musician.Id) == null)
+            {
+                var recordMember = new RecordMember { MusicRecordId = id, MusicianId = musician.Id };
 
-            var recordMember = new RecordMember { MusicRecordId = id, MusicianId = musician.Id };
-
-            _context.Add(recordMember);
-            await _context.SaveChangesAsync();
+                _context.Add(recordMember);
+                await _context.SaveChangesAsync();
+                
+            }
 
             var musicRecord = await _context.MusicRecord.Include(rm => rm.RecordMembers)
-                                                        .ThenInclude(m => m.Musician)
-                                                        .FirstOrDefaultAsync(mr => mr.Id == id);
+                                                            .ThenInclude(m => m.Musician)
+                                                            .FirstOrDefaultAsync(mr => mr.Id == id);
 
-            return View("Details", musicRecord);
+            return RedirectToAction("Details", musicRecord);
         }
 
         public async Task<IActionResult> DeleteMusician(int id)
@@ -190,7 +193,7 @@ namespace MusicApp.Controllers
             await _context.SaveChangesAsync();
 
 
-            return View("Details", musicRecord);
+            return RedirectToAction("Details", musicRecord);
 
         }
 

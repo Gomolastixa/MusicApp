@@ -99,18 +99,21 @@ namespace MusicApp.Controllers
                                                         .ThenInclude(m => m.Musician)
                                                         .FirstOrDefaultAsync(mr => mr.Name == musicRecordDto.Name);
 
+             
+            if( await _context.RecordMembers.FirstOrDefaultAsync(rm => rm.MusicRecordId == musicRecord.Id && rm.MusicianId == id) == null )
+            {
+                var recordMember = new RecordMember { MusicRecordId = musicRecord.Id, MusicianId = id };
 
-
-            var recordMember = new RecordMember { MusicRecordId = musicRecord.Id, MusicianId = id };
-
-            _context.Add(recordMember);
-            await _context.SaveChangesAsync();
+                _context.Add(recordMember);
+                await _context.SaveChangesAsync();
+            }
+            
 
             var musician = await _context.Musicians.Include(rm => rm.RecordMembers)
                                                    .ThenInclude(mr => mr.MusicRecord)
                                                    .FirstOrDefaultAsync(m => m.Id == id);
 
-            return View("Details", musician);
+            return RedirectToAction("Details", musician);
         }
 
         // GET: Musicians/Edit/5
