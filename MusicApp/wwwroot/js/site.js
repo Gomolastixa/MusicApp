@@ -9,41 +9,48 @@
 //    });
 //});
 
-//$("#searchAc").autocomplete({
-//    source: data;
-//    })
 
-//$(function () {
+// $(function () {
 
-    $("#SearchAc").autocomplete({
-        source: function (request, response) {
-            $.ajax({
-                url: "https://localhost:7185/api/SearchRecordsAPI/search",
-                dataType: "json",
-                type: "GET",
-                data: {
-                    term: request.term
-                },
-                success: function (data) {
-                   var transformed = $.map(data, function (item) {
-                       return {
-                           value :item.Name
-                       };
-                   });
-                    response(transformed);
-                },
-                error: function () {
-                    response([]);
-                }
-            });
-        },
-        minLength: 2,
-        });
+//     $("#SearchAc").autocomplete({
+//         source: function (request, response) {
+//             $.ajax({
+//                 url: "https://localhost:7185/api/SearchRecordsAPI/search",
+//                 dataType: "json",
+//                 type: "GET",
+//                 data: {
+//                     term: request.term
+//                 },
+//                 success: function (data) {
+//                    var transformed = $.map(data, function (item) {
+//                        return {
+//                            label: "Name",
+//                            value: item.Name
+//                        };
+//                    });
+//                     response(transformed);
+//                 },
+//                 error: function () {
+//                     response([]);
+//                 }
+//             });
+//         },
+//         minLength: 2,
+//         });
+// });
+
+$(function() {
+    $("#searchAc").autocomplete({
+        source: "https://localhost:7185/api/SearchRecordsAPI/search",
+        minLength: 2
+     });
+});
 
 
-
-//$("#searchAc").autocomplete({
-//    source: "https://localhost:7185/api/SearchRecordsAPI/search",
-//    minLength: 2
-
-//});
+$(function() {
+    $("#searchAc").autocomplete({
+        source: "http://localhost:5079/api/SearchRecordsAPI/search",
+        minLength: 2
+     
+     });
+});
