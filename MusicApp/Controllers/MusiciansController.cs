@@ -147,7 +147,7 @@ namespace MusicApp.Controllers
                 try
                 {
                     var musician = _mapper.Map<Musician>(musicianDto);
-                    _musicianInterface.UpdateAsync(musician);
+                    await _musicianInterface.UpdateAsync(musician);
                 }
                 catch (DbUpdateConcurrencyException)
                 {

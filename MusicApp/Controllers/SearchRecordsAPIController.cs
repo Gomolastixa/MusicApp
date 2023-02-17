@@ -1,4 +1,4 @@
-﻿using System;
+﻿ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,6 +28,7 @@ namespace MusicApp.Controllers
         {
             var query = _context.MusicRecord.AsQueryable();
             bool desc = "desc".Equals(orderDirection, StringComparison.OrdinalIgnoreCase);
+
             switch (orderBy)
             {
                 case nameof(MusicRecord.Name):
@@ -50,16 +51,16 @@ namespace MusicApp.Controllers
                 bool isyear = int.TryParse(searchText, out int year);
                 string filter = searchText.Trim().ToLower();
                 query = query.Where(x => (isyear && x.Year == year) ||
-                                                                    (x.Name.Contains(filter) ||
-                                                                    x.Artist.Contains(filter) ||
-                                                                    x.Genre.Contains(filter))
-                                                                    );
-
+                                         (x.Name.Contains(filter) ||
+                                         x.Artist.Contains(filter) ||
+                                         x.Genre.Contains(filter))
+                                         );
+                
             }
 
             return await query.ToListAsync();
 
-        }
+        } //including RecordMembers and Musician creates object cycle
 
 
         //// GET: api/SearchRecordsAPI
