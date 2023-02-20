@@ -58,9 +58,11 @@ namespace MusicApp.Controllers
                 
             }
 
-            return await query.ToListAsync();
+            return await query.Include(rm => rm.RecordMembers)
+                              .ThenInclude(m => m.Musician)
+                              .ToListAsync();
 
-        } //including RecordMembers and Musician creates object cycle
+        } //including RecordMembers and Musician creates object cycle. (Fixed in program.cs).
 
 
         //// GET: api/SearchRecordsAPI

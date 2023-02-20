@@ -133,6 +133,8 @@ namespace MusicApp.Controllers
                 var musicRecord = _mapper.Map<MusicRecord>(musicRecordDto);
                 await _musicRecordInterface.AddAsync(musicRecord);
 
+                TempData["AlertMessage"] = "Record created successfully!";
+
                 return RedirectToAction(nameof(Index));
             }
 
@@ -181,7 +183,7 @@ namespace MusicApp.Controllers
 
             var musicRecord = await _musicRecordInterface.GetByIdAsync(recordMemberToDelete.MusicRecordId);
 
-
+            TempData["AlertMessage"] = "Member deleted successfully!";
 
             return RedirectToAction("Details", musicRecord);
 
@@ -197,10 +199,12 @@ namespace MusicApp.Controllers
 
             var musicRecord = await _musicRecordInterface.GetByIdAsync(id);
 
+
             if (musicRecord == null)
             {
                 return NotFound();
-            }
+            }          
+
             return View(musicRecord);
         }
 
@@ -234,6 +238,9 @@ namespace MusicApp.Controllers
                         throw;
                     }
                 }
+
+                TempData["AlertMessage"] = "Record updated successfully!";
+
                 return RedirectToAction(nameof(Index));
             }
             return View(musicRecordDto);
@@ -268,6 +275,8 @@ namespace MusicApp.Controllers
             //}
            
             await _musicRecordInterface.DeleteAsync(id);
+
+            TempData["AlertMessage"] = "Record deleted successfully!";
 
             return RedirectToAction(nameof(Index));
         }

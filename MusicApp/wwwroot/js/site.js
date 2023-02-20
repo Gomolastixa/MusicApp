@@ -4,7 +4,7 @@
 
 $(function () {
     $("#searchAc").autocomplete({
-        delay: 150,
+        delay: 120,
         minLength: 2,
         source:
             function (request, response) {
@@ -29,3 +29,10 @@ $(function () {
             }
     });
 });
+
+//Alerts Fadeout
+//window.setTimeout(function () {
+//    $("alert").fadeTo(500, 0).slideUp(500, function () {
+//        $(this).remove();
+//    });
+//}, 3000);

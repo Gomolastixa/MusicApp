@@ -80,6 +80,8 @@ namespace MusicApp.Controllers
                 var musician = _mapper.Map<Musician>(musicianDto);
                 await _musicianInterface.AddAsync(musician);
 
+                TempData["AlertMessage"] = "Musician created successfully!";
+
                 return RedirectToAction(nameof(Index));
             }
             return View(musicianDto);
@@ -160,6 +162,10 @@ namespace MusicApp.Controllers
                         throw;
                     }
                 }
+
+                TempData["AlertMessage"] = "Musician updated successfully!";
+
+
                 return RedirectToAction(nameof(Index));
             }
             return View(musicianDto);
@@ -168,7 +174,7 @@ namespace MusicApp.Controllers
 
         public async Task<IActionResult> DeleteRecord(int id)
         {
-             var recordMemberToDelete = await _context.RecordMembers.FirstOrDefaultAsync(rm => rm.Id == id);
+            var recordMemberToDelete = await _context.RecordMembers.FirstOrDefaultAsync(rm => rm.Id == id);
 
 
             if (recordMemberToDelete != null)
@@ -178,7 +184,8 @@ namespace MusicApp.Controllers
             }
 
             var musician = await _musicianInterface.GetByIdAsync(recordMemberToDelete.MusicianId);
-           
+
+            TempData["AlertMessage"] = "Record deleted successfully!";
 
             return RedirectToAction("Details", musician);
 
@@ -212,7 +219,10 @@ namespace MusicApp.Controllers
             //    return Problem("Entity set 'ApplicationDbContext.Musicians'  is null.");
             //}
 
-           await _musicianInterface.DeleteAsync(id);
+            await _musicianInterface.DeleteAsync(id);
+
+            TempData["AlertMessage"] = "Musician deleted successfully!";
+
 
             return RedirectToAction(nameof(Index));
         }
