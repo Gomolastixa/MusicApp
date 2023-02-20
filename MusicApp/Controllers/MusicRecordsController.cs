@@ -74,19 +74,6 @@ namespace MusicApp.Controllers
 
         }
 
-        // GET: MusicRecords/SearchForm
-        public IActionResult SearchForm()
-        {
-            return View();
-        }
-
-        // POST: MusicRecords/SearchForm
-        public async Task<IActionResult> SearchResults(string SearchText)
-        {
-            return View("Index", await _context.MusicRecord.Where(j => j.Name.Contains(SearchText) || j.Artist.Contains(SearchText)
-                                                                        || j.Genre.Contains(SearchText)).ToListAsync());
-
-        }
 
         // GET: MusicRecords/Details/5
         public async Task<IActionResult> Details(int? id)
