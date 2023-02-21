@@ -47,18 +47,6 @@
                     <form asp-controller="MusicRecords" asp-action="Index" method="get" class="d-flex">
                         <input class="form-control me-sm-2" id="searchAc" type="search" list="records" autocomplete="off" name="q" placeholder="Find a Record" value="@Context.Request.Query["q"]">
 
-                        @*<datalist id="records">
-                        <option value="sons"></option>
-                        <option value="Jazz"></option>
-                        <option value="dua"></option>
-                        </datalist>*@
-
-                        @*<script>
-                            $("#searchAc").autocomplete({
-                                source: "https://localhost:7185/api/SearchRecordsAPI/search"
-                            });
-                        </script>*@
-
                         <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
                     </form>
                 </div>
