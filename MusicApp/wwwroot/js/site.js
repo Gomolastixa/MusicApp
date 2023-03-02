@@ -17,6 +17,11 @@ $(function () {
                     },
                     success: function (data) {
                         response(data.map(function (item) {
+                            if (data == null) {
+                                return {
+                                    label: 'No Data Found'
+                                    }
+                            }
                             return {
                                 label: item.name,
                                 value: item.name
