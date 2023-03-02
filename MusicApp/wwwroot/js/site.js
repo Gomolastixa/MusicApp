@@ -10,7 +10,7 @@ $(function () {
             function (request, response) {
 
                 $.ajax({
-                    url: "https://localhost:7185/api/SearchRecordsAPI/search",
+                    url: "/api/SearchRecordsAPI/search",
                     dataType: "json",
                     data: {
                         term: request.term
